@@ -141,7 +141,7 @@ function checkCollide() {
         (bots[i].x - bots[j].x) ** 2 + (bots[i].y - bots[j].y) ** 2
       );
       if (d <= bots[i].r + bots[j].r) {
-        smacksnd.play;
+        smacksnd.play();
         if (bots[i].r < bots[j].r) {
           bots[j].r = Math.sqrt(bots[i].r ** 2 + bots[j].r ** 2);
           bots[i].r = 0;
@@ -223,6 +223,4 @@ document.addEventListener("keydown",dokeydown);
 </body>
 
 </html>
- 
-
  
