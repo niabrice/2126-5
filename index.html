@@ -34,7 +34,11 @@
 </head>
 
 <body translate="no" >
-  <div>
+  <audio controls id="smack">
+  <source src="https://math.seattleacademy.org/garyanderson/snd/smack.wav">
+</audio>
+
+<div>
   Bot Count: <span id="botCount">0</span> Deaths: <span id="deaths">0</span> time: <span id="theTime">0</span>
   <button id="resetBots">Reset Bots</button>
 </div>
@@ -44,25 +48,24 @@
   
       <script id="rendered-js" >
 console.clear();
+
+const smacksnd = document.getElementById("smack");
+
+let timer = 0;
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
-
-let counter =0;
-
-
 let bots = [];
 function makeBot() {
   const bot = {};
   bot.r = 10 + Math.random() * 5;
   bot.x = (c.width - 2 * bot.r) * Math.random() + bot.r;
   bot.y = (c.height - 2 * bot.r) * Math.random() + bot.r;
-  
 
   //bot.theta= -Math.PI/4;
   bot.dx = Math.random() * 2 - 1;
   bot.dy = Math.random() * 2 - 1;
   bot.theta = Math.atan2(bot.dy, bot.dx);
-  bot.v = (bot.dx + bot.dy)/2;
+  bot.v = (bot.dx + bot.dy) / 2;
   bot.vl = 1;
   bot.vr = 1;
   return bot;
@@ -89,17 +92,13 @@ function drawBot(bot) {
     ctx.fillStyle = "rgba(255,0,0,.5)";
     ctx.fill();
   }
-  if (bot.r == bots[1].r){
-    ctx.fillStyle = "lightblue";
-    ctx.fill();
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  }
 }
 
 function moveBot(bot) {
-  counter = counter + 1;
-  document.getElementById("theTime").textContent = (counter/100).toFixed(1);
+  timer = timer + 1;
+    let theTime = document.getElementById("theTime");
+  theTime.innerHTML = timer;
+  
   bot.x = bot.x + bot.dx;
   bot.y = bot.y - bot.dy;
   if (bot.y - bot.r < 0) {
@@ -136,6 +135,7 @@ function checkCollide() {
         (bots[i].x - bots[j].x) ** 2 + (bots[i].y - bots[j].y) ** 2
       );
       if (d <= bots[i].r + bots[j].r) {
+        smacksnd.play();
         if (bots[i].r < bots[j].r) {
           bots[j].r = Math.sqrt(bots[i].r ** 2 + bots[j].r ** 2);
           bots[i].r = 0;
@@ -156,60 +156,34 @@ function checkCollide() {
 }
 setInterval(moveBots, 100);
 
-function dokeydown(e){
+function dokeydown(e) {
   console.log(e.key);
-  let stepSize = 2
-  
-  if(e.key == "ArrowUp"){
-    console.log("arrow up");
+  let stepSize = 2;
+  if (e.key == "ArrowUp") {
     bots[0].dy = bots[0].dy + stepSize;
-    e.preventDefault();
-     }
- if(e.key == "ArrowRight"){
+  }
+
+  if (e.key == "ArrowRight") {
     bots[0].dx = bots[0].dx + stepSize;
-    e.preventDefault();
-     }
-   
-  if(e.key == "ArrowLeft"){
+  }
+
+  if (e.key == "ArrowLeft") {
     bots[0].dx = bots[0].dx - stepSize;
-    e.preventDefault();
-     }
-  
-   if(e.key == "ArrowDown"){
-    bots[0].dy = bots[0].dy - stepSize;
-    e.preventDefault();
-     }
-  
-   if(e.key == " "){
+  }
+
+  if (e.key == "ArrowDown") {
+    bots[0].dy = bots[0].dy + stepSize;
+  }
+  //Stop the Bot
+    if (e.key == " ") {
+    bots[0].dy = 0;
     bots[0].dx = 0;
-    bots[0].dy = 0; 
-    e.preventDefault();
-     }
-  
-  if(e.key == "z"){
-    bots[1].dy = bots[1].dy + stepSize;
-    e.preventDefault();
-     }
-  if(e.key == "Meta"){
-    bots[1].dy = bots[1].dy - stepSize;
-    e.preventDefault();
-     }
-  if(e.key == "Alt"){
-    bots[1].dx = bots[1].dx + stepSize;
-    e.preventDefault();
-     }
-  if(e.key == "Control"){
-    bots[1].dx = bots[1].dx - stepSize;
-    e.preventDefault();
-     }
-   if(e.key == "Shift"){
-    bots[1].dx = 0;
-    bots[1].dy = 0;
-    e.preventDefault();
-     }
- 
+    e.stopPropagation();
+  }
 }
-document.addEventListener("keydown",dokeydown);
+document.addEventListener("keydown", dokeydown);
+
+document.getElementById("resetBots").addEventListener("click", doResetBots);
     </script>
 
   
